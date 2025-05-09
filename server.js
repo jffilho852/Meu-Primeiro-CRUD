@@ -59,8 +59,43 @@ app.get("/usuarios",(req,res)=>{
         res.json(rows);
     });
 });
+app.delete("/delete/:id",(req,res)=>{
+    const {id} = req.params;
+    const sql = "DELETE FROM usuarios WHERE id = ?";
+    db.run(sql,[id],function(err){
+        if(err){
+            console.error("Erro ao deletar", err);
+            return res.status(500).json({mensagem: "Erro ao deletar"});
+        }
+        res.json({mensagem: "Usuário deletado com sucesso!"});
+    });
+})
 
+//ROTA PARA EDITAR USUARIO 
 
+app.put("/editar/:id", (req, res) => {
+    const { id } = req.params;
+    const { nome } = req.body;
+
+    // Validação simples
+    if (!nome || nome.trim() === "") {
+        return res.status(400).json({ mensagem: "O nome é obrigatório." });
+    }
+
+    const sql = "UPDATE usuarios SET nome = ? WHERE id = ?";
+    db.run(sql, [nome, id], function (err) {
+        if (err) {
+            console.error("Erro ao editar usuário:", err);
+            return res.status(500).json({ mensagem: "Erro ao editar usuário." });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ mensagem: "Usuário não encontrado." });
+        }
+
+        res.json({ mensagem: "Usuário atualizado com sucesso!" });
+    });
+});
 //INICIA O SERVIDOR NA PORTA 3000
 app.listen(3000,() =>{
     console.log("servidor rodando na porta 3000");
