@@ -19,3 +19,8 @@ button {
         width: 100%;
     }
 }
+
+.btn-custom{
+    background-color: blueviolet;
+    color: white;
+}
